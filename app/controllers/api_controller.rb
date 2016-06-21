@@ -64,38 +64,23 @@ class ApiController < ApplicationController
 	end
 
 	#tdi-tarea2.herokuapp.com/api/instagram/tag/buscar
+	def responder(mensaje)
+		url = 'https://yoda.p.mashape.com/yoda?sentence=' + mensaje
+
+		respuesta = RestClient.get url, "X-Mashape-Key" => "6OXU4tEC8EmshPDZFvmPcDreZSB5p1CHRZtjsnvlWWKUKKSgJO", "Accept" => "text/plain"
+
+		return respuesta
+	end
+
 	def buscar
-		tag = params[:tag].to_s
-		puts 'tag: ' + tag
-		token = params[:access_token].to_s
-		puts 'token: ' + token
-
-		if tag == "" || token == ""
-			final = {:error => 'Parámetros incorrectos. Se requiere de un "tag" y un "token"'}
+		tag = params[:sentence].to_s
+		puts 'sentence: ' + tag
 		
-				render json: final.to_json, status: 400
+		respuesta = responder(tag)
 
-		else
-			cantidad = cantidadPosts(tag, token)
-			info = informacionPosts(obtenerPosts(tag, token))
+		final = {:text =>  respuesta}
 
-			if cantidad != nil && info != nil
-				final = {:metadata =>  {:total => cantidadPosts(tag, token)},
-					:posts => informacionPosts(obtenerPosts(tag, token)),
-					:version => $version}
-		
-				render json: final.to_json, status: 200
-			else
-				final = {:metadata =>  {:total => cantidadPosts(tag, token)},
-					:posts => informacionPosts(obtenerPosts(tag, token)),
-					:version => $version, :error => "Problemas con la API de Instagram"}
-		
-				render json: final.to_json, status: 200
-			end
-		end
-		#excepciones
-		rescue Exception => e
-			render json: {}, status: 500
+		render json: final.to_json, status: 200
 	end
 
 end
