@@ -4,9 +4,11 @@ rvm:
 services:
   - postgresql
 before_install:
-   - rvm install 2.3.0
+  - rvm install 2.3.0
 install:
   - gem install bundler
+  - gem install slack-ruby-bot
   - bundle install
+  - bundle update
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
