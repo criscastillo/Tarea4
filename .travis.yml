@@ -3,6 +3,8 @@ rvm:
   - 2.3.0
 services:
   - postgresql
+before_install:
+   - rvm install 2.3.0
 install:
   - gem install bundler
   - bundle install
